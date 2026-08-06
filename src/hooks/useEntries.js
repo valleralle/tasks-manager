@@ -32,6 +32,8 @@ const defaultEntries = generateDummyEntries(300)
 
 export function useEntries() {
   const [entries, setEntries] = useState(() => loadStoredEntries(defaultEntries))
+  // Initialisiert die nächste ID anhand der vorhandenen Einträge im Storage.
+  // Falls kein Storage vorhanden ist, werden Dummy-Daten geladen und die ID passend gesetzt.
   const [nextId, setNextId] = useState(() => {
     const maxId = loadStoredEntries(defaultEntries).reduce((max, entry) => Math.max(max, entry.id), 0)
     return maxId + 1
@@ -155,6 +157,8 @@ export function useEntries() {
 
   const pageCount = pageSize === 0 ? 1 : Math.max(1, Math.ceil(sortedFilteredEntries.length / pageSize))
 
+  // Normalisiert den aktuellen Seitenindex, so dass er immer im gültigen Bereich bleibt.
+  // Das verhindert fehlerhafte Seite-Nummern, wenn Filter oder Seitengröße die Gesamtseitenzahl ändern.
   const normalizedCurrentPage = Math.min(Math.max(currentPage, 1), pageCount)
 
   const paginatedEntries = useMemo(() => {
@@ -237,6 +241,7 @@ export function useEntries() {
     [editingId, openConfirmDialog],
   )
 
+  // Speichert die Einträge automatisch im lokalen Storage, sobald sich der Eintragszustand ändert.
   useEffect(() => {
     saveEntries(entries)
   }, [entries])
