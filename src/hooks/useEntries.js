@@ -28,14 +28,18 @@ const priorityColors = {
   medium: '#f59e0b',
   high: '#ef4444',
 }
+
+// Set to true to generate 300 dummy entries
+// When false, no dummy entries are generated
+const enableDummyData = false
 const defaultEntries = generateDummyEntries(300)
 
 export function useEntries() {
-  const [entries, setEntries] = useState(() => loadStoredEntries(defaultEntries))
-  // Initialisiert die nächste ID anhand der vorhandenen Einträge im Storage.
-  // Falls kein Storage vorhanden ist, werden Dummy-Daten geladen und die ID passend gesetzt.
+  const initialEntries = enableDummyData ? defaultEntries : loadStoredEntries([])
+  const [entries, setEntries] = useState(() => initialEntries)
+  // Initialisiert die nächste ID anhand der geladenen Einträge.
   const [nextId, setNextId] = useState(() => {
-    const maxId = loadStoredEntries(defaultEntries).reduce((max, entry) => Math.max(max, entry.id), 0)
+    const maxId = initialEntries.reduce((max, entry) => Math.max(max, entry.id), 0)
     return maxId + 1
   })
   const [formData, setFormData] = useState({
